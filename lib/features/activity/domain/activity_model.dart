@@ -5,6 +5,7 @@ class ActivityModel {
   final String date; // YYYY-MM-DD
   final bool isCompleted;
   final String createdAt;
+  final String status;
 
   ActivityModel({
     this.id,
@@ -13,6 +14,7 @@ class ActivityModel {
     required this.date,
     this.isCompleted = false,
     required this.createdAt,
+    this.status = 'Sedang',
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class ActivityModel {
       'date': date,
       'isCompleted': isCompleted ? 1 : 0,
       'createdAt': createdAt,
+      'status': status,
     };
   }
 
@@ -34,6 +37,7 @@ class ActivityModel {
       date: map['date'],
       isCompleted: map['isCompleted'] == 1,
       createdAt: map['createdAt'],
+      status: map['status'] ?? 'Sedang',
     );
   }
 
@@ -44,6 +48,7 @@ class ActivityModel {
     String? date,
     bool? isCompleted,
     String? createdAt,
+    String? status,
   }) {
     return ActivityModel(
       id: id ?? this.id,
@@ -52,6 +57,7 @@ class ActivityModel {
       date: date ?? this.date,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
     );
   }
 }

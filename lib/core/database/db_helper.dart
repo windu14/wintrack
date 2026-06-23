@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 
 class DBHelper {
   static const String _databaseName = "wintrack.db";
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
   static const String tableActivities = 'activities';
 
   // Make this a singleton class
@@ -20,14 +20,20 @@ class DBHelper {
   }
 
   Future<Database> _initDatabase() async {
-    final documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, _databaseName);
+    final path = await getDatabaseFilePath();
     return await openDatabase(
       path,
       version: _databaseVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
+
+  Future<String> getDatabaseFilePath() async {
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    return join(documentsDirectory.path, _databaseName);
+  }
+
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
@@ -37,9 +43,16 @@ class DBHelper {
         description TEXT,
         date TEXT NOT NULL,
         isCompleted INTEGER NOT NULL,
-        createdAt TEXT NOT NULL
+        createdAt TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Sedang'
       )
     ''');
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE $tableActivities ADD COLUMN status TEXT NOT NULL DEFAULT "Sedang"');
+    }
   }
 
   Future<int> insertActivity(Map<String, dynamic> row) async {

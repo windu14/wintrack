@@ -36,6 +36,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
     state = await AsyncValue.guard(() async {
       await ref.read(activityRepositoryProvider).createActivity(activity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
+      ref.invalidate(dayProgressProvider(currentDate));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -46,6 +47,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
       final updatedActivity = activity.copyWith(isCompleted: !activity.isCompleted);
       await ref.read(activityRepositoryProvider).updateActivity(updatedActivity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
+      ref.invalidate(dayProgressProvider(currentDate));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -55,6 +57,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
     state = await AsyncValue.guard(() async {
       await ref.read(activityRepositoryProvider).deleteActivity(id);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
+      ref.invalidate(dayProgressProvider(currentDate));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -64,7 +67,7 @@ final activityListProvider = AsyncNotifierProvider<ActivityListNotifier, List<Ac
   return ActivityListNotifier();
 });
 
-// Computed provider for daily progress
+// Computed provider for daily progress of selected date
 final dailyProgressProvider = Provider<double>((ref) {
   final activitiesState = ref.watch(activityListProvider);
   
@@ -76,4 +79,13 @@ final dailyProgressProvider = Provider<double>((ref) {
     },
     orElse: () => 0.0,
   );
+});
+
+// Provider for daily progress for any given date
+final dayProgressProvider = FutureProvider.family<double, DateTime>((ref, date) async {
+  final dateString = DateFormat('yyyy-MM-dd').format(date);
+  final activities = await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
+  if (activities.isEmpty) return 0.0;
+  final completed = activities.where((a) => a.isCompleted).length;
+  return completed / activities.length;
 });
