@@ -8,6 +8,15 @@ class AppTheme {
   static const Color surfaceColor = Colors.white;
   static const Color errorColor = Color(0xFFEA4335); // Google Red
 
+  static List<BoxShadow> get modernShadow => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.05),
+      blurRadius: 15,
+      spreadRadius: 0,
+      offset: const Offset(0, 8),
+    ),
+  ];
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

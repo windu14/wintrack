@@ -5,6 +5,8 @@ import 'package:wintrack/core/theme/app_theme.dart';
 import 'package:wintrack/features/activity/presentation/add_activity_screen.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ActivityScreen extends ConsumerStatefulWidget {
   const ActivityScreen({super.key});
@@ -76,7 +78,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor, // Background di balik curve
       appBar: AppBar(
-        title: Text('Tracker', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold)),
+        title: Text('Tracker', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 20.sp)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(), // Reset shape
@@ -137,70 +139,61 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                             ),
                           );
                         },
-                        child: Card(
-                          color: _getStatusColor(activity.status).withValues(alpha: 0.05),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: _getStatusColor(activity.status).withValues(alpha: 0.3)),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(activity.status).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: AppTheme.modernShadow,
                           ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            leading: Transform.scale(
-                              scale: 1.3,
-                              child: Checkbox(
-                                value: activity.isCompleted,
-                                onChanged: isPast ? null : (val) {
-                                  ref.read(activityListProvider.notifier)
-                                     .toggleActivityCompletion(activity, selectedDate);
-                                },
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                              ),
-                            ),
-                            title: Text(
-                              activity.title,
-                              style: TextStyle(
-                                decoration: activity.isCompleted ? TextDecoration.lineThrough : null,
-                                fontWeight: FontWeight.w600,
-                                color: isPast && !activity.isCompleted ? Colors.grey : const Color(0xFF202124),
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (activity.description != null && activity.description!.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
-                                    child: Text(activity.description!),
-                                  ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: _getStatusColor(activity.status)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.circle, size: 8, color: _getStatusColor(activity.status)),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        activity.status,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: _getStatusColor(activity.status),
-                                        ),
-                                      ),
-                                    ],
+                          clipBehavior: Clip.antiAlias,
+                          child: Stack(
+                            children: [
+                              // Watermark
+                              Positioned(
+                                right: -10,
+                                bottom: -20,
+                                child: Text(
+                                  activity.status.toUpperCase(),
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 50.sp,
+                                    fontWeight: FontWeight.w900,
+                                    color: _getStatusColor(activity.status).withValues(alpha: 0.1),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              ListTile(
+                                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                leading: Transform.scale(
+                                  scale: 1.5,
+                                  child: Checkbox(
+                                    value: activity.isCompleted,
+                                    onChanged: isPast ? null : (val) {
+                                      ref.read(activityListProvider.notifier)
+                                         .toggleActivityCompletion(activity, selectedDate);
+                                    },
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.r)),
+                                  ),
+                                ),
+                                title: Text(
+                                  activity.title,
+                                  style: TextStyle(
+                                    decoration: activity.isCompleted ? TextDecoration.lineThrough : null,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16.sp,
+                                    color: isPast && !activity.isCompleted ? Colors.grey : const Color(0xFF202124),
+                                  ),
+                                ),
+                                subtitle: activity.description != null && activity.description!.isNotEmpty
+                                    ? Padding(
+                                        padding: EdgeInsets.only(top: 4.h),
+                                        child: Text(activity.description!, style: TextStyle(fontSize: 14.sp)),
+                                      )
+                                    : null,
+                              ),
+                            ],
                           ),
-                        ),
+                        ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms).slideX(begin: 0.1),
                       );
                     },
                   );

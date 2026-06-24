@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:wintrack/core/database/db_helper.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -94,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       appBar: AppBar(
-        title: Text('Pengaturan', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Pengaturan', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.sp)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(),
@@ -109,20 +111,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: _isLoading 
             ? const Center(child: CircularProgressIndicator())
             : ListView(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0.w),
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0.h),
                     child: Text(
                       'Backup & Restore',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+                      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
                     ),
                   ),
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: Color(0xFFE8EAED)),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor,
+                      borderRadius: BorderRadius.circular(16.r),
+                      boxShadow: AppTheme.modernShadow,
                     ),
                     child: Column(
                       children: [
@@ -141,20 +143,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                  ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                  SizedBox(height: 24.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0.h),
                     child: Text(
                       'Tentang',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+                      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
                     ),
                   ),
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: Color(0xFFE8EAED)),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor,
+                      borderRadius: BorderRadius.circular(16.r),
+                      boxShadow: AppTheme.modernShadow,
                     ),
                     child: ListTile(
                       leading: const Icon(Icons.info_outline, color: Colors.grey),
@@ -167,13 +169,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           applicationVersion: '1.0.0',
                           applicationLegalese: '© 2026 Wintrack Developer',
                           children: [
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                             const Text('Aplikasi pelacakan aktivitas harian dengan gamifikasi tingkat tinggi untuk membantu Anda membangun kebiasaan yang lebih baik.'),
                           ],
                         );
                       },
                     ),
-                  ),
+                  ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1),
                 ],
               ),
       ),

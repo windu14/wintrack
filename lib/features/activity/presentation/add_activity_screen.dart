@@ -5,6 +5,7 @@ import 'package:wintrack/features/activity/domain/activity_model.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddActivityScreen extends ConsumerStatefulWidget {
   const AddActivityScreen({super.key});
@@ -56,7 +57,7 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       appBar: AppBar(
-        title: Text('Tambah Aktivitas', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Tambah Aktivitas', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.sp)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(),
@@ -64,14 +65,13 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
       ),
       body: Container(
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppTheme.backgroundColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
         ),
-        clipBehavior: Clip.antiAlias,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(24.0.w),
             child: Form(
               key: _formKey,
               child: Column(
@@ -80,46 +80,40 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: 'Judul',
-                      filled: true,
-                      fillColor: Colors.white,
+                      labelText: 'Judul Aktivitas',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
+                      prefixIcon: const Icon(Icons.task_alt),
                     ),
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Mohon masukkan judul';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   TextFormField(
                     controller: _descriptionController,
-                    maxLines: 3,
                     decoration: InputDecoration(
                       labelText: 'Deskripsi (Opsional)',
-                      filled: true,
-                      fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
+                      prefixIcon: const Icon(Icons.description_outlined),
                     ),
+                    maxLines: 3,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 24.h),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedStatus,
                     decoration: InputDecoration(
                       labelText: 'Prioritas',
-                      filled: true,
-                      fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
+                      prefixIcon: const Icon(Icons.flag_outlined),
                     ),
                     items: _statusOptions.map((String status) {
                       return DropdownMenuItem<String>(
@@ -135,12 +129,21 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48.h),
                   ElevatedButton(
                     onPressed: _saveActivity,
-                    child: const Text('Simpan Aktivitas', style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text('Simpan Aktivitas', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp)),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32.h),
                 ],
               ),
             ),
