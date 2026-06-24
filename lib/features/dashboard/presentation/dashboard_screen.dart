@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
-import 'package:wintrack/features/dashboard/presentation/widgets/fire_shader_widget.dart';
+import 'package:lottie/lottie.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -50,6 +50,10 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildGreetingCard(int level, double progress) {
+    int fireLevel = (progress * 5).ceil();
+    if (fireLevel < 1) fireLevel = 1;
+    if (fireLevel > 5) fireLevel = 5;
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -106,11 +110,14 @@ class DashboardScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 16),
-          // Shader Widget
+          // Lottie Animation Widget
           SizedBox(
             width: 120,
             height: 150,
-            child: FireShaderWidget(progress: progress),
+            child: Lottie.asset(
+              'assets/animations/fire_$fireLevel.json',
+              fit: BoxFit.contain,
+            ),
           ),
         ],
       ),
