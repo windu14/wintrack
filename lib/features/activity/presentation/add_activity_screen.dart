@@ -62,6 +62,7 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
+        height: double.infinity,
         decoration: const BoxDecoration(
           color: AppTheme.backgroundColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),

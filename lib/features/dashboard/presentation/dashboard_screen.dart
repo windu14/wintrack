@@ -24,27 +24,34 @@ class DashboardScreen extends ConsumerWidget {
         shape: const RoundedRectangleBorder(),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: AppTheme.backgroundColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SingleChildScrollView(
-          child: Padding(
+      body: Column(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildGreetingCard(level, progress),
-                const SizedBox(height: 24),
-                _buildDailyTipCard(),
-                const SizedBox(height: 24),
-                _buildCTA(context),
-              ],
+            child: _buildGreetingCard(level, progress),
+          ),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: AppTheme.backgroundColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildCTA(context),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -114,58 +121,31 @@ class DashboardScreen extends ConsumerWidget {
           SizedBox(
             width: 120,
             height: 150,
-            child: Lottie.asset(
-              'assets/animations/fire_$fireLevel.json',
-              fit: BoxFit.contain,
-            ),
+            child: progress == 0.0 
+              ? ColorFiltered(
+                  colorFilter: const ColorFilter.matrix([
+                    0.2126, 0.7152, 0.0722, 0, 0,
+                    0.2126, 0.7152, 0.0722, 0, 0,
+                    0.2126, 0.7152, 0.0722, 0, 0,
+                    0,      0,      0,      1, 0,
+                  ]),
+                  child: Lottie.asset(
+                    'assets/animations/fire_$fireLevel.json',
+                    fit: BoxFit.contain,
+                    animate: false,
+                  ),
+                )
+              : Lottie.asset(
+                  'assets/animations/fire_$fireLevel.json',
+                  fit: BoxFit.contain,
+                ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDailyTipCard() {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: Color(0xFFE8EAED)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 28),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Tips Harian',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Konsistensi adalah kunci. Jangan lupa untuk mencentang aktivitas Anda setiap hari agar level Anda terus meningkat!',
-                    style: TextStyle(color: Color(0xFF5F6368), height: 1.5),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildCTA(BuildContext context) {
     return GestureDetector(

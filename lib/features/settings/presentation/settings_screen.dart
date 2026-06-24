@@ -26,13 +26,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return;
       }
 
+      final dbBytes = await dbFile.readAsBytes();
       String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: 'Simpan Backup Wintrack',
         fileName: 'wintrack_backup.db',
+        bytes: dbBytes,
       );
 
       if (outputFile != null) {
-        await dbFile.copy(outputFile);
+        try {
+          await dbFile.copy(outputFile);
+        } catch (e) {
+          // In some platforms, saveFile with bytes already writes the file.
+        }
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Berhasil menyimpan backup!')));
       }

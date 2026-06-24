@@ -22,7 +22,7 @@ class AppTheme {
         onError: Colors.white,
       ),
       scaffoldBackgroundColor: backgroundColor,
-      textTheme: GoogleFonts.poppinsTextTheme(),
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(),
       
       // Zero elevation for flat modern design
       appBarTheme: const AppBarTheme(

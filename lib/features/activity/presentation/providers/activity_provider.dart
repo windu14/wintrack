@@ -36,7 +36,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
     state = await AsyncValue.guard(() async {
       await ref.read(activityRepositoryProvider).createActivity(activity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
-      ref.invalidate(dayProgressProvider(currentDate));
+      ref.invalidate(dayProgressProvider(dateString));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -47,7 +47,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
       final updatedActivity = activity.copyWith(isCompleted: !activity.isCompleted);
       await ref.read(activityRepositoryProvider).updateActivity(updatedActivity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
-      ref.invalidate(dayProgressProvider(currentDate));
+      ref.invalidate(dayProgressProvider(dateString));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -57,7 +57,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
     state = await AsyncValue.guard(() async {
       await ref.read(activityRepositoryProvider).deleteActivity(id);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
-      ref.invalidate(dayProgressProvider(currentDate));
+      ref.invalidate(dayProgressProvider(dateString));
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -82,8 +82,7 @@ final dailyProgressProvider = Provider<double>((ref) {
 });
 
 // Provider for daily progress for any given date
-final dayProgressProvider = FutureProvider.family<double, DateTime>((ref, date) async {
-  final dateString = DateFormat('yyyy-MM-dd').format(date);
+final dayProgressProvider = FutureProvider.family<double, String>((ref, dateString) async {
   final activities = await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
   if (activities.isEmpty) return 0.0;
   final completed = activities.where((a) => a.isCompleted).length;

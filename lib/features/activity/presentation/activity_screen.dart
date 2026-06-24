@@ -14,7 +14,7 @@ class ActivityScreen extends ConsumerStatefulWidget {
 
 class _ActivityScreenState extends ConsumerState<ActivityScreen> {
   late ScrollController _calendarScrollController;
-  final int _daysOffset = 30; // 30 days before and after today
+  final int _daysOffset = 15; // 15 days before and after today (approx 1 month total)
 
   @override
   void initState() {
@@ -113,22 +113,28 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                     itemCount: activities.length,
                     itemBuilder: (context, index) {
                       final activity = activities[index];
-                      return Dismissible(
-                        key: Key('activity_${activity.id}'),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: AppTheme.errorColor,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Icon(Icons.delete, color: Colors.white, size: 30),
-                        ),
-                        onDismissed: (direction) {
-                          ref.read(activityListProvider.notifier)
-                             .deleteActivity(activity.id!, selectedDate);
+                      return GestureDetector(
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Hapus Aktivitas'),
+                              content: const Text('Apakah Anda yakin ingin menghapus aktivitas ini?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Batal'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    ref.read(activityListProvider.notifier).deleteActivity(activity.id!, selectedDate);
+                                  },
+                                  child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         child: Card(
                           child: ListTile(
@@ -139,7 +145,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                                 ref.read(activityListProvider.notifier)
                                    .toggleActivityCompletion(activity, selectedDate);
                               },
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                             ),
                             title: Text(
                               activity.title,
@@ -267,7 +273,8 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
               targetDate.day == selectedDate.day;
 
           // Fetch day progress
-          final dayProgressAsync = ref.watch(dayProgressProvider(targetDate));
+          final dateString = DateFormat('yyyy-MM-dd').format(targetDate);
+          final dayProgressAsync = ref.watch(dayProgressProvider(dateString));
 
           return GestureDetector(
             onTap: () {
@@ -304,8 +311,8 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                   const SizedBox(height: 4),
                   dayProgressAsync.when(
                     data: (prog) => _getEmoteIcon(prog),
-                    loading: () => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-                    error: (_, _) => const Icon(Icons.error, size: 16, color: Colors.red),
+                    loading: () => const Icon(Icons.circle, size: 28, color: Colors.transparent),
+                    error: (_, _) => const Icon(Icons.error, size: 28, color: Colors.red),
                   ),
                 ],
               ),
