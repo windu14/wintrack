@@ -16,10 +16,6 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
-    project.evaluationDependsOn(":app")
-}
-
-subprojects {
     afterEvaluate {
         if (project.plugins.hasPlugin("com.android.library") || project.plugins.hasPlugin("com.android.application")) {
             val androidExt = project.extensions.getByName("android")
@@ -33,6 +29,7 @@ subprojects {
             }
         }
     }
+    project.evaluationDependsOn(":app")
 }
 
 tasks.register<Delete>("clean") {
