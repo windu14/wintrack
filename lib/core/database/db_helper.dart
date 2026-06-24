@@ -70,6 +70,11 @@ class DBHelper {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getAllActivities() async {
+    Database db = await instance.database;
+    return await db.query(tableActivities);
+  }
+
   Future<int> updateActivity(Map<String, dynamic> row) async {
     Database db = await instance.database;
     int id = row['id'];

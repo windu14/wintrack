@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:wintrack/features/activity/domain/activity_model.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
 
 class AddActivityScreen extends ConsumerStatefulWidget {
@@ -55,7 +56,7 @@ class _AddActivityScreenState extends ConsumerState<AddActivityScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       appBar: AppBar(
-        title: const Text('Tambah Aktivitas', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Tambah Aktivitas', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(),

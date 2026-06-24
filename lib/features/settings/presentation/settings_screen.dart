@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:wintrack/core/database/db_helper.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -93,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       appBar: AppBar(
-        title: const Text('Pengaturan', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Pengaturan', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(),
@@ -155,10 +156,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       borderRadius: BorderRadius.circular(16),
                       side: const BorderSide(color: Color(0xFFE8EAED)),
                     ),
-                    child: const ListTile(
-                      leading: Icon(Icons.info_outline, color: Colors.grey),
-                      title: Text('Wintrack'),
-                      subtitle: Text('Versi 1.0.0'),
+                    child: ListTile(
+                      leading: const Icon(Icons.info_outline, color: Colors.grey),
+                      title: const Text('Wintrack'),
+                      subtitle: const Text('Versi 1.0.0'),
+                      onTap: () {
+                        showAboutDialog(
+                          context: context,
+                          applicationName: 'Wintrack',
+                          applicationVersion: '1.0.0',
+                          applicationLegalese: '© 2026 Wintrack Developer',
+                          children: [
+                            const SizedBox(height: 16),
+                            const Text('Aplikasi pelacakan aktivitas harian dengan gamifikasi tingkat tinggi untuk membantu Anda membangun kebiasaan yang lebih baik.'),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],

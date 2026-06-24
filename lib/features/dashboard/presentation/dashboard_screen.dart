@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -10,15 +11,16 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = ref.watch(dailyProgressProvider);
+    final scoreAsync = ref.watch(lifetimeScoreProvider);
+    final score = scoreAsync.value ?? 0;
     
-    // Level calc based on completion. Since we don't have historical points yet, 
-    // we just mock a level or use daily progress for now. Let's make level = 1 + (progress * 10).toInt()
-    final level = 1 + (progress * 10).toInt();
+    // Level calc based on lifetime score
+    final level = 1 + (score ~/ 100);
 
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       appBar: AppBar(
-        title: const Text('Beranda', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Beranda', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(),
@@ -28,7 +30,7 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildGreetingCard(level, progress),
+            child: _buildGreetingCard(level, progress, score),
           ),
           Expanded(
             child: Container(
@@ -44,7 +46,7 @@ class DashboardScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildCTA(context),
+                      _buildDashboardCards(context),
                     ],
                   ),
                 ),
@@ -56,7 +58,7 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGreetingCard(int level, double progress) {
+  Widget _buildGreetingCard(int level, double progress, int score) {
     int fireLevel = (progress * 5).ceil();
     if (fireLevel < 1) fireLevel = 1;
     if (fireLevel > 5) fireLevel = 5;
@@ -88,9 +90,18 @@ class DashboardScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Level $level',
-                  style: const TextStyle(
+                  style: GoogleFonts.spaceGrotesk(
                     color: Colors.white,
                     fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Skor Total: $score',
+                  style: GoogleFonts.spaceGrotesk(
+                    color: Colors.amberAccent,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -99,7 +110,7 @@ class DashboardScreen extends ConsumerWidget {
                   'Progres Hari Ini: ${(progress * 100).toInt()}%',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -146,6 +157,88 @@ class DashboardScreen extends ConsumerWidget {
   }
 
 
+
+  Widget _buildDashboardCards(BuildContext context) {
+    return Column(
+      children: [
+        _buildCTA(context),
+        const SizedBox(height: 16),
+        _buildChallengeCard(),
+        const SizedBox(height: 16),
+        _buildInfoCard(),
+      ],
+    );
+  }
+
+  Widget _buildChallengeCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF2994A), Color(0xFFF2C94C)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tantangan Hari Ini',
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Selesaikan 3 aktivitas untuk bonus skor!',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.local_fire_department, color: Colors.white),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF56CCF2), Color(0xFF2F80ED)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Kenapa Mencatat?',
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Mencatat aktivitas membantumu tetap fokus.',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.lightbulb_outline, color: Colors.white),
+        ],
+      ),
+    );
+  }
 
   Widget _buildCTA(BuildContext context) {
     return GestureDetector(

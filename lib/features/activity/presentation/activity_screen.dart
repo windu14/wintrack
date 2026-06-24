@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:wintrack/core/theme/app_theme.dart';
 import 'package:wintrack/features/activity/presentation/add_activity_screen.dart';
 import 'package:wintrack/features/activity/presentation/providers/activity_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ActivityScreen extends ConsumerStatefulWidget {
   const ActivityScreen({super.key});
@@ -75,7 +76,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor, // Background di balik curve
       appBar: AppBar(
-        title: const Text('Tracker', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Tracker', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold)),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(), // Reset shape
@@ -137,15 +138,24 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                           );
                         },
                         child: Card(
+                          color: _getStatusColor(activity.status).withValues(alpha: 0.05),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(color: _getStatusColor(activity.status).withValues(alpha: 0.3)),
+                          ),
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            leading: Checkbox(
-                              value: activity.isCompleted,
-                              onChanged: isPast ? null : (val) {
-                                ref.read(activityListProvider.notifier)
-                                   .toggleActivityCompletion(activity, selectedDate);
-                              },
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                            leading: Transform.scale(
+                              scale: 1.3,
+                              child: Checkbox(
+                                value: activity.isCompleted,
+                                onChanged: isPast ? null : (val) {
+                                  ref.read(activityListProvider.notifier)
+                                     .toggleActivityCompletion(activity, selectedDate);
+                                },
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                              ),
                             ),
                             title: Text(
                               activity.title,
@@ -165,19 +175,26 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                                   ),
                                 const SizedBox(height: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: _getStatusColor(activity.status).withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: _getStatusColor(activity.status).withValues(alpha: 0.5)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: _getStatusColor(activity.status)),
                                   ),
-                                  child: Text(
-                                    activity.status,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: _getStatusColor(activity.status),
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.circle, size: 8, color: _getStatusColor(activity.status)),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        activity.status,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: _getStatusColor(activity.status),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

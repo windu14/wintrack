@@ -9,6 +9,11 @@ class ActivityRepository {
     return maps.map((map) => ActivityModel.fromMap(map)).toList();
   }
 
+  Future<List<ActivityModel>> getAllActivities() async {
+    final maps = await _dbHelper.getAllActivities();
+    return maps.map((map) => ActivityModel.fromMap(map)).toList();
+  }
+
   Future<ActivityModel> createActivity(ActivityModel activity) async {
     final id = await _dbHelper.insertActivity(activity.toMap());
     return activity.copyWith(id: id);

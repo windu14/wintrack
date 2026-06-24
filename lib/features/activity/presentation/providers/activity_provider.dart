@@ -37,6 +37,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
       await ref.read(activityRepositoryProvider).createActivity(activity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
       ref.invalidate(dayProgressProvider(dateString));
+      ref.invalidate(lifetimeScoreProvider);
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -48,6 +49,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
       await ref.read(activityRepositoryProvider).updateActivity(updatedActivity);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
       ref.invalidate(dayProgressProvider(dateString));
+      ref.invalidate(lifetimeScoreProvider);
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -58,6 +60,7 @@ class ActivityListNotifier extends AsyncNotifier<List<ActivityModel>> {
       await ref.read(activityRepositoryProvider).deleteActivity(id);
       final dateString = DateFormat('yyyy-MM-dd').format(currentDate);
       ref.invalidate(dayProgressProvider(dateString));
+      ref.invalidate(lifetimeScoreProvider);
       return await ref.read(activityRepositoryProvider).getActivitiesByDate(dateString);
     });
   }
@@ -87,4 +90,25 @@ final dayProgressProvider = FutureProvider.family<double, String>((ref, dateStri
   if (activities.isEmpty) return 0.0;
   final completed = activities.where((a) => a.isCompleted).length;
   return completed / activities.length;
+});
+
+// Computed provider for lifetime accumulated score
+final lifetimeScoreProvider = FutureProvider<int>((ref) async {
+  final activities = await ref.read(activityRepositoryProvider).getAllActivities();
+  if (activities.isEmpty) return 0;
+  
+  // Group by date
+  final Map<String, List<ActivityModel>> grouped = {};
+  for (var act in activities) {
+    grouped.putIfAbsent(act.date, () => []).add(act);
+  }
+  
+  double totalScore = 0.0;
+  for (var date in grouped.keys) {
+    final acts = grouped[date]!;
+    final completed = acts.where((a) => a.isCompleted).length;
+    totalScore += (completed / acts.length) * 100;
+  }
+  
+  return totalScore.toInt();
 });
